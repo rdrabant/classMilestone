@@ -7,11 +7,55 @@ const DECK = new Array(52);
 function createAndShufflDeck(){
     let count = 0;
 
+    let imgBaseUrl = "/images/1920px-Playing_card_";
+
     for(let suite of SUITES ){
 
-        DECK[count++] = new Card(suite, )
+        let localImgBaseUrl = imgBaseUrl;
 
+        if(suite == "Hearts"){
+            localImgBaseUrl = imgBaseUrl.concat("heart_");
+        }else if(suite == "Diamonds"){
+            localImgBaseUrl = imgBaseUrl.concat("diamond_");
+        }else if(suite == "Clubs"){
+            localImgBaseUrl = imgBaseUrl.concat("club_");
+        }else if(suite == "Spades"){
+            localImgBaseUrl = imgBaseUrl.concat("spade_");
+        }    
+
+        for(i = 1; i <= 13; i++){
+            let cardImgName;
+            let cardValue;
+            let altVal;
+            if(i == 1){
+                cardImgName = "A";
+                cardValue = i;
+                altVal = "Ace of " + suite;
+            }else if(i == 11){
+                cardImgName = "J";
+                cardValue = 10;
+                altVal = "Jack of " + suite;
+            }else if(i == 12){
+                cardImgName = "Q";
+                cardValue = 10;
+                altVal = "Queen of " + suite;
+            }else if(i == 13){
+                cardImgName = "K";
+                cardValue = 10;
+                altVal = "King of " + suite;
+            }else{
+                cardImgName = i;
+                cardValue = i;
+                altVal = i + " of " + suite;
+            }
+
+            let imgUrl = localImgBaseUrl.concat(cardImgName, ".svg.png");
+            DECK[count++] = new Card(suite, imgUrl, cardValue, altVal);
+        }
+    
     }
+
+//    shuffle(DECK);
 
 }
 
@@ -36,12 +80,31 @@ function shuffle(array) {
     return array;
   }
 
+  function runCards(){
+
+    document.addEventListener("DOMContentLoaded", function(){
+    
+        for(card of DECK){
+
+            let img = document.createElement("img");
+            img.src = card.imageUrl;
+            img.alt = card.altVal;
+            img.style = "width: 5%; height: 5%"
+            img.src = card.imageUrl;
+
+            document.body.appendChild(img);
+            document.body.append("<br/>" + card.altVal + "<br/>");
+           
+        }
+    })
+  }
 
   class Card {
-    constructor(suite, imageUrl, value) {
+    constructor(suite, imageUrl, value, altVal) {
       this.suite = suite;
       this.imageUrl = imageUrl;
       this.value = value;
+      this.altVal = altVal;
     }
 
     isAce(){
@@ -51,3 +114,8 @@ function shuffle(array) {
         return false;
     }
   }
+
+  createAndShufflDeck();
+  runCards();
+
+  
