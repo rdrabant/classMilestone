@@ -55,7 +55,7 @@ function createAndShufflDeck(){
     
     }
 
-//    shuffle(DECK);
+   shuffle(DECK);
 
 }
 
@@ -84,20 +84,19 @@ function shuffle(array) {
 
     document.addEventListener("DOMContentLoaded", function(){
 
-        let br = document.createElement("br");
 
         for(card of DECK){
 
             let img = document.createElement("img");
             img.src = card.imageUrl;
             img.alt = card.altVal;
-            img.style = "width: 5%; height: 5%"
+            img.style = "width: 10%; height: 10%"
             img.src = card.imageUrl;
 
             document.body.appendChild(img);
-            document.body.appendChild(br);
+            document.body.appendChild(document.createElement("br"));
             document.body.append(card.altVal);
-            document.body.append("<br/>" + card.altVal + "<br/>");
+            document.body.appendChild(document.createElement("br"));
            
         }
     })
