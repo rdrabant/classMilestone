@@ -2,7 +2,12 @@
 
 const SUITES = ["Hearts", "Diamonds", "Clubs", "Spades"];
 
-const DECK = new Array(52);
+let DECK = new Array(52);
+const cardArrayPos = 0;
+const numOfPlayer = 1;
+
+let dealerCards = [];
+let players = [];
 
 function createAndShufflDeck(){
     let count = 0;
@@ -80,9 +85,26 @@ function shuffle(array) {
     return array;
   }
 
-  function runCards(){
+  function dealCards(){
 
     document.addEventListener("DOMContentLoaded", function(){
+
+        
+        createAndShufflDeck();
+
+        for(initCard = 0; initCard < 2; initCard++){
+
+            dealerCards.push(DECK[cardArrayPos++]);
+
+            for(i = 0; i <= numOfPlayer; i++){
+                if(initCard == 1){
+                    players[i] = new Array();
+                }
+
+                players[i].push(DECK[cardArrayPos++])
+            }
+        }
+
 
 
         for(card of DECK){
@@ -118,7 +140,6 @@ function shuffle(array) {
     }
   }
 
-  createAndShufflDeck();
-  runCards();
+  dealCards();
 
   
