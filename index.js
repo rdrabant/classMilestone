@@ -7,7 +7,7 @@ const DECK = new Array(52);
 function createAndShufflDeck(){
     let count = 0;
 
-    let imgBaseUrl = "/images/1920px-Playing_card_";
+    let imgBaseUrl = "images/1920px-Playing_card_";
 
     for(let suite of SUITES ){
 
@@ -83,7 +83,9 @@ function shuffle(array) {
   function runCards(){
 
     document.addEventListener("DOMContentLoaded", function(){
-    
+
+        let br = document.createElement("br");
+
         for(card of DECK){
 
             let img = document.createElement("img");
@@ -93,6 +95,8 @@ function shuffle(array) {
             img.src = card.imageUrl;
 
             document.body.appendChild(img);
+            document.body.appendChild(br);
+            document.body.append(card.altVal);
             document.body.append("<br/>" + card.altVal + "<br/>");
            
         }
