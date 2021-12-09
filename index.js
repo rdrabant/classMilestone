@@ -1,5 +1,19 @@
 
 
+const SUITES = ["Hearts", "Diamonds", "Clubs", "Spades"];
+
+const DECK = new Array(52);
+
+function createAndShufflDeck(){
+    let count = 0;
+
+    for(let suite of SUITES ){
+
+        DECK[count++] = new Card(suite, )
+
+    }
+
+}
 
 
 // shuffle an array code found here. 
@@ -31,7 +45,7 @@ function shuffle(array) {
     }
 
     isAce(){
-        if(this.value === -1){
+        if(this.value === 1){
             return true;
         }
         return false;
