@@ -3,7 +3,7 @@
 const SUITES = ["Hearts", "Diamonds", "Clubs", "Spades"];
 
 let DECK = new Array(52);
-const cardArrayPos = 0;
+let cardArrayPos = 0;
 const numOfPlayer = 1;
 
 let dealerCards = [];
@@ -96,8 +96,8 @@ function shuffle(array) {
 
             dealerCards.push(DECK[cardArrayPos++]);
 
-            for(i = 0; i <= numOfPlayer; i++){
-                if(initCard == 1){
+            for(i = 0; i < numOfPlayer; i++){
+                if(initCard == 0){
                     players[i] = new Array();
                 }
 
@@ -105,6 +105,93 @@ function shuffle(array) {
             }
         }
 
+        console.log("CARDS DEALT: " + (cardArrayPos));
+        console.log("DEALER CARDS: " + (dealerCards.length));
+        let cardsDiv = document.getElementById("hands");
+        
+        for(i = 0; i < numOfPlayer; i++){
+
+            console.log("PLAYER " + i + " CARDS: " + (players[i].length));
+
+            let span = document.createElement("span");
+            span.id = "player" + i;
+            span.style = "width: 400px; border-style  solid; display: inline-block";
+
+            span.append("Player " + (i + 1) + " hand");
+            span.appendChild(document.createElement("br"));
+
+            for(card of players[i]){
+
+                let cardSpan = document.createElement("span");
+                cardSpan.style = "display: inline-block";
+
+                let img = document.createElement("img");
+                img.src = card.imageUrl;
+                img.alt = card.altVal;
+                img.style = "width: 20%; height: 20%";
+                img.src = card.imageUrl;
+    
+                cardSpan.appendChild(img);
+                cardSpan.appendChild(document.createElement("br"));
+                cardSpan.append(card.altVal);
+
+                span.append(cardSpan);
+                //span.appendChild(document.createElement("br"));
+               
+            }
+
+            // span.appendChild(document.createElement("br"));
+               
+            cardsDiv.append(span);
+
+        }
+
+        //dealer hand
+        {            
+            console.log("DEALER CARDS: ");
+
+            let span = document.createElement("span");
+            span.id = "dealer";
+            span.style = "width: 400px;";
+
+            span.append("Dealer's hand");
+            span.appendChild(document.createElement("br"));
+            span.style = "width: 400px;  border-style  solid; display: inline-block";
+
+            for(card of dealerCards){
+
+                let cardSpan = document.createElement("span");
+                cardSpan.style = "display: inline-block";
+
+                let img = document.createElement("img");
+                img.src = card.imageUrl;
+                img.alt = card.altVal;
+                img.style = "width: 20%; height: 20%";
+                img.src = card.imageUrl;
+    
+                cardSpan.appendChild(img);
+                cardSpan.appendChild(document.createElement("br"));
+                cardSpan.append(card.altVal);
+
+                span.append(cardSpan);
+                //span.appendChild(document.createElement("br"));
+            
+            }
+
+            span.appendChild(document.createElement("br"));
+            
+            cardsDiv.append(span);
+        }
+
+
+        
+//    <span style="width: 400px;" id="">
+ //   players hand
+//</span>
+
+//<span style="width: 400px;">
+ //   dealers hand
+//</span>
 
 
         for(card of DECK){
