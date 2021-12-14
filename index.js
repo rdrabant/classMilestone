@@ -6,8 +6,15 @@ let DECK = new Array(52);
 let cardArrayPos = 0;
 const numOfPlayer = 1;
 
+const CARD_WIDTH = "96px";
+const CARD_HEIGHT = "120px;"
+
 let dealerCards = [];
 let players = [];
+
+
+let ACE_TEST = null;
+
 
 function createAndShufflDeck(){
     let count = 0;
@@ -32,19 +39,19 @@ function createAndShufflDeck(){
             let cardImgName;
             let cardValue;
             let altVal;
-            if(i == 1){
+            if(i === 1){
                 cardImgName = "A";
                 cardValue = i;
                 altVal = "Ace of " + suite;
-            }else if(i == 11){
+            }else if(i === 11){
                 cardImgName = "J";
                 cardValue = 10;
                 altVal = "Jack of " + suite;
-            }else if(i == 12){
+            }else if(i === 12){
                 cardImgName = "Q";
                 cardValue = 10;
                 altVal = "Queen of " + suite;
-            }else if(i == 13){
+            }else if(i === 13){
                 cardImgName = "K";
                 cardValue = 10;
                 altVal = "King of " + suite;
@@ -55,6 +62,9 @@ function createAndShufflDeck(){
             }
 
             let imgUrl = localImgBaseUrl.concat(cardImgName, ".svg.png");
+            if(cardValue === 1){
+                ACE_TEST = new Card(suite, imgUrl, cardValue, altVal);
+            }
             DECK[count++] = new Card(suite, imgUrl, cardValue, altVal);
         }
     
@@ -105,6 +115,10 @@ function shuffle(array) {
             }
         }
 
+        //debug forcing aces to player hand
+        players[0].push(ACE_TEST)
+        
+
         console.log("CARDS DEALT: " + (cardArrayPos));
         console.log("DEALER CARDS: " + (dealerCards.length));
         let cardsDiv = document.getElementById("hands");
@@ -128,9 +142,8 @@ function shuffle(array) {
                 let img = document.createElement("img");
                 img.src = card.imageUrl;
                 img.alt = card.altVal;
-                img.style = "width: 20%; height: 20%";
-                img.src = card.imageUrl;
-    
+                img.style = "width: " + CARD_WIDTH + "; height: " + CARD_HEIGHT + ";";
+                
                 cardSpan.appendChild(img);
                 cardSpan.appendChild(document.createElement("br"));
                 cardSpan.append(card.altVal);
@@ -140,15 +153,21 @@ function shuffle(array) {
                
             }
 
+            span.appendChild(document.createElement("br"));
+            let totalValueSpan = document.createElement("span");
+            totalValueSpan.id = "player" + i + "total";
+            span.appendChild(totalValueSpan);
+            
             // span.appendChild(document.createElement("br"));
-               
             cardsDiv.append(span);
+
+            updatePlayerTotal(i);
 
         }
 
         //dealer hand
         {            
-            console.log("DEALER CARDS: ");
+            //console.log("DEALER CARDS: ");
 
             let span = document.createElement("span");
             span.id = "dealer";
@@ -158,16 +177,22 @@ function shuffle(array) {
             span.appendChild(document.createElement("br"));
             span.style = "width: 400px;  border-style  solid; display: inline-block";
 
+            let firstCard = true;
             for(card of dealerCards){
 
                 let cardSpan = document.createElement("span");
                 cardSpan.style = "display: inline-block";
 
                 let img = document.createElement("img");
-                img.src = card.imageUrl;
+                if(firstCard){
+                    firstCard = false;
+                    img.src = "images/Oak-Leaf-Back.jpg";
+
+                }else{
+                    img.src = card.imageUrl;
+                }
                 img.alt = card.altVal;
-                img.style = "width: 20%; height: 20%";
-                img.src = card.imageUrl;
+                img.style = "width: " + CARD_WIDTH + "; height: " + CARD_HEIGHT + ";";
     
                 cardSpan.appendChild(img);
                 cardSpan.appendChild(document.createElement("br"));
@@ -199,7 +224,7 @@ function shuffle(array) {
             let img = document.createElement("img");
             img.src = card.imageUrl;
             img.alt = card.altVal;
-            img.style = "width: 10%; height: 10%"
+            img.style = "width: " + CARD_WIDTH + "; height: " + CARD_HEIGHT + ";";
             img.src = card.imageUrl;
 
             document.body.appendChild(img);
@@ -210,6 +235,58 @@ function shuffle(array) {
         }
     })
   }
+
+  /**
+   * pass a player id, or "dealer" to total it
+   * @param {} elementId 
+   */
+  function updatePlayerTotal(id){
+
+        let elementId = null;
+        let cardArray;
+        if(id !== "dealer"){
+            elementId = "player" + i + "total";
+            cardArray = players[i];
+        }else{
+            elementId = "dealerTotal";
+            cardArray =  dealerCards;
+        }
+    
+        //console.log("PLAYER " + elementId + " CARDS: " + (players[i].length));
+        console.log("getting element: \"" + elementId + "\"");
+        let theSpan = document.getElementById(elementId);
+    
+        console.log("theSpan element: " + theSpan);
+    
+        let cardTotal = 0;
+        let totalAces = 0;
+        for(card of cardArray){
+           if(card.isAce()){
+                console.log("card to add (is ace) " + card.value)
+                totalAces++;
+           }else{
+            console.log("card to add (not ace) " + card.value)
+            cardTotal += card.value;
+           }
+        }
+
+        
+        if(totalAces > 0){
+            for(pos = totalAces; pos > 0; pos--){
+                //console.log("trying ace: " + pos);
+                
+                //see if the total 
+                
+            }
+        }
+
+        // span.appendChild(document.createElement("br"));
+        console.log("CARD TOTAL: " + cardTotal);  
+        theSpan.innerText = "CARD TOTAL: " + cardTotal;
+
+    }
+
+  
 
   class Card {
     constructor(suite, imageUrl, value, altVal) {
