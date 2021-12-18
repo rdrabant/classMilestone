@@ -18,7 +18,7 @@ let playerTotal = [];
 
 let ACE_TEST = null;
 let HANDS_DIV = null;
-
+let TOTALS_DIV = null;
 
 function createAndShufflDeck() {
     let count = 0;
@@ -99,48 +99,114 @@ function shuffle(array) {
     return array;
 }
 
-async function nextPlayer(refreshLastPlayersHand){
+function nextPlayer(refreshLastPlayersHand) {
     currentPlayer++;
-    if(refreshLastPlayersHand){
+    if (refreshLastPlayersHand) {
         players[currentPlayer - 1].updatePlayerDisplay();
     }
-    
-    if(currentPlayer < players.length){
+
+    if (currentPlayer < players.length) {
         players[currentPlayer].updatePlayerDisplay();
     }
 
     console.log("PLAYER: " + currentPlayer);
-    if(currentPlayer >= players.length){
+    if (currentPlayer >= players.length) {
         console.log("ON TO DEALER");
 
         // let dealerCard1 = document.getElementById("dealerCard1");
         dealer.updatePlayerDisplay();
 
-        await sleep(2000);
+        // sleep(2000);
         // dealerCard1.src = dealer.cards[0].imageUrl;
-    
-        let stop = (dealer.totalValue > 17 || (dealer.totalValue == 17 && !dealer.soft));
+        sleep(2000).then(() => {
+            let stop = (dealer.totalValue > 17 || (dealer.totalValue == 17 && !dealer.soft));
 
-        while(!stop){
-            // await sleep(2000);
-            dealer.hit();
-            dealer.updatePlayerTotal();
-            stop = (dealer.totalValue > 17 || (dealer.totalValue == 17 && !dealer.soft));
-        }
+            while (!stop) {
+                // await sleep(2000);
+                dealer.hit();//auto updates total and display
+                // dealer.updatePlayerTotal();
+                stop = (dealer.totalValue > 17 || (dealer.totalValue == 17 && !dealer.soft));
+            }
+
+
+            for (let player of players) {
+                let totalEl = document.getElementById(player.id + "totalSpan");
+    
+                let playerTotals = getTotals();
+                
+                //function saveTotalsToLocalStorage(playerScores){
+
+
+                if (player.totalValue > 21) {
+                    //totalEl.textContent = player.totalValue + " BUST";
+                    //something for localvalue to log a loss
+                    playerTotals.loss++;
+
+                    // this.win = 0;
+                    // this.push = 0;
+                
+                } else if (dealer.totalValue > 21) {
+                    totalEl.textContent = "WINNER. DEALER BUST";
+                    playerTotals.win++;
+
+                } else if (dealer.totalValue > player.totalValue) {
+                    totalEl.textContent = "LOSER. " + player.totalValue;
+                    playerTotals.loss++;
+
+                } else if (dealer.totalValue == player.totalValue) {
+                    totalEl.textContent = "PUSH. " + player.totalValue;
+                    this.push = 0;
+
+                } else if (dealer.totalValue < player.totalValue) {
+                    totalEl.textContent = "WINNER. " + player.totalValue;
+                    playerTotals.win++;
+
+                }
+
+                saveTotalsToLocalStorage(playerTotals);
+            }
+
+        });
 
 
 
 
     }
+
+
+
     // players[currentPlayer -1].updatePlayerTotal();  
 
 }
 
 function dealCards() {
 
-    document.addEventListener("DOMContentLoaded", function () {
+        //reset values in case this is a new draw not just page refresh
+
+        cardArrayPos = 0;
+        currentPlayer = 0;
 
         HANDS_DIV = document.getElementById("hands");
+        TOTALS_DIV = document.getElementById("totals");
+
+
+        // ADD THE BUTTONS TO DEAL, RESET SCORE
+        let newDeal = document.createElement("button");
+        newDeal.onclick = function () {
+            HANDS_DIV.innerHTML = null;
+            TOTALS_DIV.innerHTML = null;
+            dealCards();
+            // alert("test");
+        }
+        newDeal.append("New Deal");
+        let totals = getTotals();
+        TOTALS_DIV.append("Wins: " + totals.win + " Losses: " + totals.loss + " Draws: " + totals.push);
+        TOTALS_DIV.appendChild(document.createElement("br"));
+        TOTALS_DIV.appendChild(document.createElement("br"));
+        TOTALS_DIV.append(newDeal);
+    
+        
+        
 
         dealer = new Player("dealer", new Array())
 
@@ -165,11 +231,11 @@ function dealCards() {
         // players[0].push(ACE_TEST)
 
 
-        console.log("CARDS DEALT: " + (cardArrayPos));
-        console.log("DEALER CARDS: " + (dealer.cards.length));
-        for (i = 0; i < numOfPlayer; i++) {
-            console.log("PLAYER " + i + " CARDS: " + (players[i].cards.length));
-        }
+        // console.log("CARDS DEALT: " + (cardArrayPos));
+        // console.log("DEALER CARDS: " + (dealer.cards.length));
+        // for (i = 0; i < numOfPlayer; i++) {
+        //     console.log("PLAYER " + i + " CARDS: " + (players[i].cards.length));
+        // }
         // let cardsDiv = document.getElementById("hands");
 
         for (i = 0; i < numOfPlayer; i++) {
@@ -182,152 +248,41 @@ function dealCards() {
         {
 
             dealer.updatePlayerTotal();
-            //console.log("DEALER CARDS: ");
-
-            // let span = document.createElement("span");
-            // span.id = "dealer";
-            // span.style = "width: 400px;";
-
-            // span.append("Dealer's hand");
-            // span.appendChild(document.createElement("br"));
-            // span.style = "width: 400px;  border-style  solid; display: inline-block";
-
-            // let firstCard = true;
-            // for (card of dealer.cards) {
-
-            //     let cardSpan = document.createElement("span");
-            //     cardSpan.style = "display: inline-block";
-
-            //     let img = document.createElement("img");
-            //     if (firstCard) {
-            //         firstCard = false;
-            //         img.src = "images/Oak-Leaf-Back.jpg";
-
-            //     } else {
-            //         img.src = card.imageUrl;
-            //     }
-            //     img.alt = card.altVal;
-            //     img.style = "width: " + CARD_WIDTH + "; height: " + CARD_HEIGHT + ";";
-
-            //     cardSpan.appendChild(img);
-            //     cardSpan.appendChild(document.createElement("br"));
-            //     cardSpan.append(card.altVal);
-
-            //     span.append(cardSpan);
-            //     //span.appendChild(document.createElement("br"));
-
-            // }
-
-            // span.appendChild(document.createElement("br"));
-
-            // cardsDiv.append(span);
-        }
-
-
-
-        //    <span style="width: 400px;" id="">
-        //   players hand
-        //</span>
-
-        //<span style="width: 400px;">
-        //   dealers hand
-        //</span>
-
-
-        for (card of DECK) {
-
-            let img = document.createElement("img");
-            img.src = card.imageUrl;
-            img.alt = card.altVal;
-            img.style = "width: " + CARD_WIDTH + "; height: " + CARD_HEIGHT + ";";
-            img.src = card.imageUrl;
-
-            document.body.appendChild(img);
-            document.body.appendChild(document.createElement("br"));
-            document.body.append(card.altVal);
-            document.body.appendChild(document.createElement("br"));
 
         }
 
+
+        if (dealer.cards[1].value === 1) {
+            //update to ask for inurance 
+            // lets assume insurnace is a suckers bet and skip the question for now.
+
+            if(dealer.cards[0].value === 10){
+                for(count = 0;  count = players.length; count++ ){
+                    nextPlayer(true);
+                }
+            }
+
+
+        }
+
+        // for (card of DECK) {
+        //     let img = document.createElement("img");
+        //     img.src = card.imageUrl;
+        //     img.alt = card.altVal;
+        //     img.style = "width: " + CARD_WIDTH + "; height: " + CARD_HEIGHT + ";";
+        //     img.src = card.imageUrl;
+
+        //     document.body.appendChild(img);
+        //     document.body.appendChild(document.createElement("br"));
+        //     document.body.append(card.altVal);
+        //     document.body.appendChild(document.createElement("br"));
+        // }
 
         // console.log("PLAYER 0 CARDS: " + players[0].cards.length);
         // players[0].hit();
-    })
+        
 }
 
-//   /**
-//    * pass a player id, or "dealer" to total it
-//    * @param {} elementId 
-//    */
-//   function updatePlayerTotal(id){
-
-//         let elementId = null;
-//         let cardArray;
-//         if(id !== "dealer"){
-//             elementId = "player" + i + "total";
-//             cardArray = players[i];
-//         }else{
-//             elementId = "dealerTotal";
-//             cardArray =  dealerCards;
-//         }
-
-//         //console.log("PLAYER " + elementId + " CARDS: " + (players[i].length));
-//         //console.log("getting element: \"" + elementId + "\"");
-//         let theSpan = document.getElementById(elementId);
-
-//         //console.log("theSpan element: " + theSpan);
-
-//         let cardTotal = 0;
-//         let totalAces = 0;
-//         for(card of cardArray){
-//            if(card.isAce()){
-//                 // console.log("card to add (is ace) " + card.value)
-//                 totalAces++;
-//            }else{
-//             // console.log("card to add (not ace) " + card.value)
-//             cardTotal += card.value;
-//            }
-//         }
-
-//         let totalAceValue = 0;
-//         let soft = false;
-//         if(totalAces > 0){
-//             // for(pos = totalAces; pos > 0; pos--){
-//             //     totalAceValue = (pos * 11) + ((totalAces - pos) * 1);
-
-//             //      console.log("pos " + pos + " trying ace: " + (totalAceValue /*+ cardTotal*/));
-
-//             //     if((totalAceValue + cardTotal) < 21){
-//             //         break;
-//             //     }
-
-//             //     //see if the total 
-
-//             // }
-//             //2 aces will always be over 21. So total it with 1 ace as 11, then try it with all
-//             // aces as value of 1 each
-//             totalAceValue = 11 + (totalAces -1);
-
-//             console.log("(totalAceValue + cardTotal) > 21 (" + totalAceValue + " + " + cardTotal + ") > 21")
-//             if((totalAceValue + cardTotal) > 21){
-//                 totalAceValue = totalAces;
-//             }else{
-//                 soft = true;
-//             }
-
-//             console.log("pos " + 0 + " trying ace: " + (totalAceValue + cardTotal));
-
-//         }
-
-//         // span.appendChild(document.createElement("br"));
-//         // console.log("CARD TOTAL: " + totalAceValue = totalAces);  
-//         if(!soft){
-//             theSpan.innerText = "CARD TOTAL: " + (totalAceValue + cardTotal);
-//         }else{
-//             theSpan.innerText = "CARD TOTAL: SOFT " + (totalAceValue + cardTotal);
-//         }
-
-//     }
 
 
 
@@ -347,16 +302,25 @@ class Card {
     }
 }
 
+
+class PlayerScores {
+    constructor() {
+        this.loss = 0;
+        this.win = 0;
+        this.push = 0;
+    }
+}
+
+
 class Player {
     constructor(id) {
         this.cards = new Array();
         this.id = id;
         this.totalValue = 0
         this.soft = false;
-        // this.lost = false;
-        // this.stay = false;
+        this.askForInsurance = false;
 
-        console.log("init PLAYER " + id + " CARDS: " + (this.cards.length));
+        // console.log("init PLAYER " + id + " CARDS: " + (this.cards.length));
 
         this.span = document.createElement("span");
         this.span.id = "player" + id;
@@ -365,7 +329,6 @@ class Player {
         HANDS_DIV.append(this.span);
 
     }
-
 
     /**
      * hit
@@ -396,16 +359,15 @@ class Player {
         for (let card of this.cards) {
 
             let cardSpan = document.createElement("span");
-            cardSpan.style = "display: inline-block";
+            cardSpan.style = "display: inline-block; vertical-align: text-top;";
 
             let img = document.createElement("img");
 
 
             if (this.id == "dealer" && firstCard) {
-                firstCard = false;
-                if(currentPlayer < players.length){
+                if (currentPlayer < players.length) {
                     img.src = "images/Oak-Leaf-Back.jpg";
-                }else{
+                } else {
                     img.src = card.imageUrl;
                 }
                 img.id = "dealerCard1";
@@ -419,9 +381,14 @@ class Player {
 
             cardSpan.appendChild(img);
             cardSpan.appendChild(document.createElement("br"));
-            cardSpan.append(card.altVal);
 
+            if (!(this.id == "dealer" && currentPlayer < players.length) || !firstCard) {
+                cardSpan.append(card.altVal);
+            }
+            
             this.span.append(cardSpan);
+            firstCard = false;
+                
             //span.appendChild(document.createElement("br"));
 
         }
@@ -444,69 +411,35 @@ class Player {
             // cardArray =  dealerCards;
         }
 
-        //console.log("PLAYER " + elementId + " CARDS: " + (players[i].length));
-        //console.log("getting element: \"" + elementId + "\"");
-        // let theSpan = document.getElementById(elementId);
 
-        //console.log("theSpan element: " + theSpan);
+        let totalSpan = document.createElement("span");
+        this.span.appendChild(totalSpan);
+        totalSpan.id = this.id + "totalSpan";
 
-        // let cardTotal = 0;
-        // let totalAces = 0;
-        // for (let card of this.cards) {
-        //     if (card.isAce()) {
-        //         // console.log("card to add (is ace) " + card.value)
-        //         totalAces++;
-        //     } else {
-        //         // console.log("card to add (not ace) " + card.value)
-        //         cardTotal += card.value;
-        //     }
-        // }
+        // console.log("ID: " + this.id + " currentPlayer: " + currentPlayer  +" players.length: " + players.length);
+        if (this.id != "dealer" || currentPlayer >= players.length) {
+            if (this.totalValue == 21) {
+                if (this.cards.length == 2) {
+                    totalSpan.append("TOTAL: " + (this.totalValue) + " BLACKJACK!!!!!");
+                } else {
+                    totalSpan.append("TOTAL: " + (this.totalValue));
+                }   //this.lost = true;
+                //this.stay = true;
+                if (this.id != "dealer") {
+                    nextPlayer(false);
+                }
 
-        // let totalAceValue = 0;
-        // this.soft = false;
-        // if (totalAces > 0) {
+            } else if (this.totalValue > 21) {
+                totalSpan.append("BUST YOU LOSER - TOTAL: " + (this.totalValue));
+                if (this.id != "dealer") {
+                    nextPlayer(false);
+                }
 
-        //     //2 aces will always be over 21. So total it with 1 ace as 11, then try it with all
-        //     // aces as value of 1 each
-        //     totalAceValue = 11 + (totalAces - 1);
-
-        //     console.log("(totalAceValue + cardTotal) > 21 (" + totalAceValue + " + " + cardTotal + ") > 21")
-        //     if ((totalAceValue + cardTotal) > 21) {
-        //         totalAceValue = totalAces;
-        //     } else {
-        //         this.soft = true;
-        //     }
-
-        //     console.log("pos " + 0 + " trying ace: " + (totalAceValue + cardTotal));
-
-        // }
-
-        // // span.appendChild(document.createElement("br"));
-        // // console.log("CARD TOTAL: " + totalAceValue = totalAces);  
-        // this.totalValue = totalAceValue + cardTotal;
-        if (this.totalValue == 21) {
-            if(this.cards.length  == 2){
-                this.span.append("TOTAL: " + (this.totalValue) + " BLACKJACK!!!!!");
-            }else{
-                this.span.append("TOTAL: " + (this.totalValue));
-            }   //this.lost = true;
-            //this.stay = true;
-            if(this.id != "dealer"){
-                nextPlayer(false);
+            } else if (!this.soft) {
+                totalSpan.append("CARD TOTAL: " + (this.totalValue));
+            } else {
+                totalSpan.append("CARD TOTAL - SOFT: " + (this.totalValue));
             }
-
-        }else if (this.totalValue > 21) {
-            this.span.append("BUST YOU LOSER - TOTAL: " + (this.totalValue));
-            //this.lost = true;
-            //this.stay = true;
-            if(this.id != "dealer"){
-                nextPlayer(false);
-            }
-
-        }else if (!this.soft) {
-            this.span.append("CARD TOTAL: " + (this.totalValue));
-        } else {
-            this.span.append("CARD TOTAL - SOFT: " + (this.totalValue));
         }
 
         this.span.appendChild(document.createElement("br"));
@@ -516,15 +449,7 @@ class Player {
         if (this.id == currentPlayer) {
 
             let hitMe = document.createElement("button");
-            // hitMe.onclick = this.hit;
-            // hitMe.addEventListener( 'click', this.hit(this), false );
-
-            // hitMe.onclick = players[this.id].hit();
-            //             var object = new ClassName();
-            // document.getElementById('x').addEventListener('click', function ()
-            // {
-            //   object.method()
-            // }, false);
+            
             const anId = this.id;
             hitMe.onclick = function () {
                 // console.log("ID TO HIT: " + anId);
@@ -590,13 +515,36 @@ class Player {
 
 //function stolen from https://www.sitepoint.com/delay-sleep-pause-wait/
 function sleep(milliseconds) {
-    const date = Date.now();
-    let currentDate = null;
-    do {
-      currentDate = Date.now();
-    } while (currentDate - date < milliseconds);
-  }
+    return new Promise(resolve => setTimeout(resolve, milliseconds));
+}
 
-//players[0].hitMe()
-dealCards();
+
+function getTotals() {
+    let playerScores = JSON.parse(window.localStorage.getItem("totals"));
+
+    //if not "truthy"
+    if (!playerScores) {
+        console.log("totals are null")
+
+        playerScores = new PlayerScores()
+    }
+
+    console.log("SCORES: " + JSON.stringify(playerScores));
+
+    return playerScores;
+}
+
+function saveTotalsToLocalStorage(playerScores){
+ 
+    localStorage.setItem('totals', JSON.stringify(playerScores));
+}
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    dealCards();
+    // getTotals();
+                
+})
+
+
 
