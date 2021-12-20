@@ -238,10 +238,6 @@ function dealCards() {
         }
         resetScore.append("Reset Score and New Deal");
         TOTALS_DIV.append(resetScore);
-        alert('how is reset score not being added')
-    
-        
-        
 
         dealer = new Player("dealer", new Array())
 
