@@ -15,6 +15,8 @@ const CARD_HEIGHT = "156px;"//2400
 let dealer = null;
 let players = [];
 let playerTotal = [];
+let soundFile = 'sounds/cards.m4a';
+
 
 let ACE_TEST = null;
 let HANDS_DIV = null;
@@ -164,6 +166,10 @@ function nextPlayer(refreshLastPlayersHand) {
                 }
 
                 saveTotalsToLocalStorage(playerTotals);
+
+                let totalSpan = document.getElementById("totalSpan");
+                totalSpan.textContent = "Wins: " + playerTotals.win + " Losses: " + playerTotals.loss + " Draws: " + playerTotals.push;
+        
             }
 
         });
@@ -190,6 +196,16 @@ function dealCards() {
         TOTALS_DIV = document.getElementById("totals");
 
 
+        //added a play sound from here. 
+        //https://stackoverflow.com/questions/15567426/async-play-sound-in-javascript/41317657
+        
+        try {
+            new Audio(soundFile).play();
+        }catch{
+            //nothing to worry about, it fails because DOM must be interacted with before play runs
+            //https://developer.chrome.com/blog/autoplay/
+        }
+        
         // ADD THE BUTTONS TO DEAL, RESET SCORE
         let newDeal = document.createElement("button");
         newDeal.onclick = function () {
@@ -199,11 +215,30 @@ function dealCards() {
             // alert("test");
         }
         newDeal.append("New Deal");
-        let totals = getTotals();
-        TOTALS_DIV.append("Wins: " + totals.win + " Losses: " + totals.loss + " Draws: " + totals.push);
+        let playerTotals = getTotals();
+        let totalSpan = document.createElement("span");
+        totalSpan.id = "totalSpan";
+        totalSpan.textContent = "Wins: " + playerTotals.win + " Losses: " + playerTotals.loss + " Draws: " + playerTotals.push;
+        TOTALS_DIV.append(totalSpan);
         TOTALS_DIV.appendChild(document.createElement("br"));
         TOTALS_DIV.appendChild(document.createElement("br"));
+        
         TOTALS_DIV.append(newDeal);
+
+        
+        TOTALS_DIV.append("\xa0\xa0\xa0");
+
+        let resetScore = document.createElement("button");
+        resetScore.onclick = function () {
+            HANDS_DIV.innerHTML = null;
+            TOTALS_DIV.innerHTML = null;
+            resetTheTotals();
+            dealCards();
+            // alert("test");
+        }
+        resetScore.append("Reset Score and New Deal");
+        TOTALS_DIV.append(resetScore);
+
     
         
         
@@ -265,21 +300,7 @@ function dealCards() {
 
         }
 
-        // for (card of DECK) {
-        //     let img = document.createElement("img");
-        //     img.src = card.imageUrl;
-        //     img.alt = card.altVal;
-        //     img.style = "width: " + CARD_WIDTH + "; height: " + CARD_HEIGHT + ";";
-        //     img.src = card.imageUrl;
-
-        //     document.body.appendChild(img);
-        //     document.body.appendChild(document.createElement("br"));
-        //     document.body.append(card.altVal);
-        //     document.body.appendChild(document.createElement("br"));
-        // }
-
-        // console.log("PLAYER 0 CARDS: " + players[0].cards.length);
-        // players[0].hit();
+   
         
 }
 
@@ -457,6 +478,10 @@ class Player {
             }
             hitMe.append("Hit Me");
             this.span.append(hitMe);
+            //nbsp didnt work, so had to look up how to do add it via stack overflow.
+            //https://stackoverflow.com/questions/5237989/how-is-a-non-breaking-space-represented-in-a-javascript-string
+            //this.span.append("&nbsp;");
+            this.span.append("\xa0\xa0\xa0");
 
 
             let stay = document.createElement("button");
@@ -465,6 +490,8 @@ class Player {
             }
             stay.append("Stay");
             this.span.append(stay);
+            
+
         }
 
     }
@@ -518,6 +545,11 @@ function sleep(milliseconds) {
     return new Promise(resolve => setTimeout(resolve, milliseconds));
 }
 
+
+function resetTheTotals(){
+
+    window.localStorage.removeItem("totals")
+}
 
 function getTotals() {
     let playerScores = JSON.parse(window.localStorage.getItem("totals"));

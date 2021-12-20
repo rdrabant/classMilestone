@@ -1,0 +1,12 @@
+body {
+    background-image: url("images/backgroundjpg.jpg");
+    /*background-repeat: repeat-y;
+    background-repeat: repeat-x;*/
+  }
+
+
+
+  .sticky {
+    position: fixed;
+    top: 0;
+  }
