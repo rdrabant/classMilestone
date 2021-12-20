@@ -111,9 +111,9 @@ function nextPlayer(refreshLastPlayersHand) {
         players[currentPlayer].updatePlayerDisplay();
     }
 
-    console.log("PLAYER: " + currentPlayer);
+    //console.log("PLAYER: " + currentPlayer);
     if (currentPlayer >= players.length) {
-        console.log("ON TO DEALER");
+        //console.log("ON TO DEALER");
 
         // let dealerCard1 = document.getElementById("dealerCard1");
         dealer.updatePlayerDisplay();
@@ -561,7 +561,7 @@ function getTotals() {
         playerScores = new PlayerScores()
     }
 
-    console.log("SCORES: " + JSON.stringify(playerScores));
+    //console.log("SCORES: " + JSON.stringify(playerScores));
 
     return playerScores;
 }
