@@ -157,7 +157,7 @@ function nextPlayer(refreshLastPlayersHand) {
 
                 } else if (dealer.totalValue == player.totalValue) {
                     totalEl.textContent = "PUSH. " + player.totalValue;
-                    this.push = 0;
+                    playerTotals.push++;
 
                 } else if (dealer.totalValue < player.totalValue) {
                     totalEl.textContent = "WINNER. " + player.totalValue;
