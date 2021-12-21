@@ -18,7 +18,7 @@ let playerTotal = [];
 let soundFile = 'sounds/cards.m4a';
 
 
-let ACE_TEST = null;
+//let ACE_TEST = null;
 let HANDS_DIV = null;
 let TOTALS_DIV = null;
 
@@ -179,10 +179,6 @@ function nextPlayer(refreshLastPlayersHand) {
 
     }
 
-
-
-    // players[currentPlayer -1].updatePlayerTotal();  
-
 }
 
 function dealCards() {
@@ -198,11 +194,11 @@ function dealCards() {
 
         //added a play sound from here. 
         //https://stackoverflow.com/questions/15567426/async-play-sound-in-javascript/41317657
-        
         try {
             new Audio(soundFile).play();
         }catch{
             //nothing to worry about, it fails because DOM must be interacted with before play runs
+            //chrome did not want sounds to auto play
             //https://developer.chrome.com/blog/autoplay/
         }
         
@@ -569,9 +565,7 @@ function saveTotalsToLocalStorage(playerScores){
 
 
 document.addEventListener("DOMContentLoaded", function () {
-    dealCards();
-    // getTotals();
-                
+    dealCards();                
 })
 
 
